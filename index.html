@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digaf MFI - Advanced Control Panel</title>
+    <title>Digaf MFI - Custom Tracker Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -12,7 +12,6 @@
 </head>
 <body class="bg-slate-100 flex h-screen antialiased">
 
-    <!-- SIDEBAR -->
     <div class="w-64 h-screen bg-slate-50 border-r border-slate-200 p-4 flex flex-col justify-between">
         <div>
             <div class="flex items-center space-x-2 mb-8 px-2">
@@ -24,7 +23,7 @@
                     <p class="text-xs font-semibold text-slate-400 tracking-wider mb-2 px-2">OVERVIEW</p>
                     <div class="space-y-1">
                         <button class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium bg-purple-50 text-purple-700 border-l-4 border-purple-600">
-                            <span>Renewal Processing</span>
+                            <span>Ledger Total Entries</span>
                             <span id="sidebar-count" class="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                         </button>
                     </div>
@@ -34,20 +33,18 @@
         <div class="text-xs text-slate-400 px-2">Powered by Kidus • Control Panel</div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- HEADER -->
         <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
             <div class="flex items-center space-x-4">
-                <h1 class="text-sm font-bold tracking-wider text-slate-700 bg-purple-50 px-3 py-1 rounded border border-purple-100">ADVANCED FINANCE TRACKER</h1>
+                <h1 class="text-sm font-bold tracking-wider text-slate-700 bg-purple-50 px-3 py-1 rounded border border-purple-100">CUSTOM DATA TRACKER</h1>
                 <div class="flex items-center space-x-1 text-xs text-emerald-600 font-medium">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                     <span>Synced Listener Active</span>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
-                <div id="terminal-badge" class="bg-amber-50 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold border border-amber-200 cursor-pointer" onclick="bindTerminal()">
-                    UNBOUND (Click to Secure)
+                <div id="terminal-badge" class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-200">
+                    Kidusyared Liku BOUND
                 </div>
                 <div class="bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 border border-slate-200">
                     Active Officer: <span class="text-purple-700">Kidusyared Liku</span>
@@ -55,67 +52,48 @@
             </div>
         </header>
 
-        <!-- MAIN SECTION -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 space-y-6">
-            <!-- CONSOLE HEADER -->
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
                 <div>
                     <h2 class="text-sm font-bold text-purple-900 flex items-center space-x-2">
                         <span class="w-2 h-2 bg-purple-600 rounded-full"></span>
                         <span>Workflow Management Console</span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-1">የደንበኛ መረጃዎችን በዝርዝር ይመዝግቡ፣ በAI ኦዲት ያድርጉ እና ሪፖርቱን ያውርዱ።</p>
+                    <p class="text-xs text-slate-400 mt-1">የኮፒ/ፓስት መረጃዎችን በፍጥነት ይመዝግቡ፤ የሁኔታ ማስተካከያውን ይምረጡ።</p>
                 </div>
                 <button onclick="clearData()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium border border-red-200 transition-all">
                     Reset Ledger
                 </button>
             </div>
 
-            <!-- SMART IMPORTER & REGISTRATION FORM -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
-                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">🔮 Smart Finance Importer</h3>
-                
-                <!-- Advanced Form Fields -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Client Full Name</label>
-                        <input type="text" id="client-name" oninput="checkNames()" placeholder="የደንበኛ ሙሉ ስም" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Phone Number</label>
-                        <input type="text" id="client-phone" placeholder="09..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Loan Amount (ETB)</label>
-                        <input type="number" id="loan-amount" placeholder="የብድር መጠን በብር" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Due Date</label>
-                        <input type="date" id="due-date" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500">
-                    </div>
-                </div>
-
-                <div class="space-y-3 pt-2">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Extended Remarks / Notes</label>
-                    <textarea id="importer-text" placeholder="ተጨማሪ ማስታወሻዎችን እዚህ ይጻፉ... (ለምሳሌ: Renewal required for second round)" class="w-full h-20 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-purple-500 font-mono resize-none"></textarea>
+                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wider">🔮 Smart Importer & Registration</h3>
+                <div class="space-y-3">
+                    <textarea id="importer-text" placeholder="እዚህ ላይ የደንበኛ መረጃዎችን ጻፍ ወይም ኮፒ (Paste) አድርገህ አምጣ..." class="w-full h-32 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-purple-500 font-mono resize-none"></textarea>
                     
-                    <div id="match-warning" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between text-xs text-amber-800 font-medium">
-                        <span>⚠️ Registered Portfolio Matches: <span id="matched-name" class="font-bold bg-white px-1.5 py-0.5 rounded border border-amber-200">Kalkidan</span></span>
-                    </div>
-
-                    <div class="flex space-x-3">
-                        <input type="text" id="custom-status" placeholder="የሂደት ሁኔታ (Status) - ለምሳሌ: Pending, Approved" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500">
-                        <button onclick="registerData()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-6 py-2 rounded-lg shadow transition-all">
-                            Save to Ledger
-                        </button>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Select Status (የሂደት ሁኔታ)</label>
+                            <select id="custom-status" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-purple-500 font-medium text-slate-700">
+                                <option value="Paid">🟢 Paid</option>
+                                <option value="Renewal">🟡 Renewal</option>
+                                <option value="No Response">🔴 No Response</option>
+                                <option value="Complete">🔵 Complete</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-end pt-5">
+                            <button onclick="registerData()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-8 py-2.5 rounded-lg shadow transition-all uppercase tracking-wider">
+                                Save to Ledger
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- REGISTERED DATA TABLE -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">📋 Active Digaf Finance Ledger</h3>
+                    <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">📋 Active Digaf Ledger (የተመዘገቡ መረጃዎች)</h3>
                     <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg shadow transition-all flex items-center space-x-1">
                         <span>📥</span> <span>Export to Excel</span>
                     </button>
@@ -125,50 +103,38 @@
                         <thead>
                             <tr class="bg-slate-100/70 border-b border-slate-200 text-slate-500 text-[11px] font-bold uppercase tracking-wider">
                                 <th class="px-6 py-3">Timestamp</th>
-                                <th class="px-6 py-3">Client Name</th>
-                                <th class="px-6 py-3">Phone</th>
-                                <th class="px-6 py-3">Loan (ETB)</th>
-                                <th class="px-6 py-3">Due Date</th>
-                                <th class="px-6 py-3">Remarks</th>
+                                <th class="px-6 py-3">Client Details / Pasted Data</th>
                                 <th class="px-6 py-3">Status</th>
                                 <th class="px-6 py-3">Officer</th>
                             </tr>
                         </thead>
                         <tbody id="ledger-rows" class="divide-y divide-slate-200 text-xs text-slate-700">
-                            <!-- Data injected here -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- FLOATING AI BUTTON -->
     <button onclick="toggleCopilot()" class="fixed bottom-6 right-6 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2 z-40 animate-bounce">
         <span>✨</span> <span>Ask Digaf AI</span>
     </button>
 
-    <!-- AI COPILOT MODAL -->
     <div id="copilot-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-[#0f172a] text-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col h-[65vh]">
             <div class="p-4 bg-[#111827] border-b border-slate-800 flex items-center justify-between">
-                <span class="text-xs font-bold tracking-wide text-purple-400">🤖 DIGAF SMART AUDITOR (ACTIVE AI)</span>
+                <span class="text-xs font-bold tracking-wide text-purple-400">🤖 DIGAF AI SEARCH ASSISTANT</span>
                 <button onclick="toggleCopilot()" class="text-slate-400 hover:text-white font-bold text-sm">✕</button>
             </div>
             <div class="flex-1 p-6 flex flex-col justify-between bg-[#0b0f19]">
                 <div class="space-y-4">
                     <div class="bg-slate-800/40 border border-slate-800 p-4 rounded-xl text-xs text-slate-300">
-                        <p class="font-bold text-purple-300 mb-1">🤖 Digaf AI Auditor:</p>
-                        <p id="ai-response">ሰላም ኪዱስ! በቅጹ ላይ የሞላኸውን የደንበኛ የብድር መረጃ ኦዲት ለማድረግ ዝግጁ ነኝ። እባክህ መረጃ አስገብተህ "Scan Document" የሚለውን ተጫን።</p>
-                    </div>
-                    <div id="extracted-date" class="hidden p-3 bg-emerald-950/50 border border-emerald-800 text-emerald-400 font-mono text-xs rounded-lg flex justify-between items-center">
-                        <span>🎯 AI AUDIT COMPLIANCE KEY:</span>
-                        <span class="font-bold bg-emerald-900/50 px-2 py-0.5 rounded border border-emerald-700">MFI-COMPLIANT-2026</span>
+                        <p class="font-bold text-purple-300 mb-1">🤖 Digaf AI:</p>
+                        <p id="ai-response">ሰላም ኪዱስ! በዋናው ሳጥን ላይ የጻፍከውን ስም ወይም መረጃ በመዝገቡ ላይ መፈለግ እችላለሁ። ቃል ጽፈህ "Search Ledger" የሚለውን ተጫን።</p>
                     </div>
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="scanDoc()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-3 rounded-xl uppercase transition-all">Scan Document</button>
-                    <button id="inject-btn" disabled onclick="injectLedger()" class="flex-1 bg-slate-800 text-slate-500 text-xs font-bold py-3 rounded-xl uppercase transition-all cursor-not-allowed">Inject AI Sync</button>
+                    <button onclick="scanOrSearch()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-3 rounded-xl uppercase transition-all">Search Ledger</button>
                 </div>
             </div>
         </div>
@@ -179,123 +145,52 @@
             renderLedger();
         });
 
-        function bindTerminal() {
-            const secret = prompt("እባክህ የአድሚን ምስጢራዊ ቁልፍ (Secret Token) አስገባ፦");
-            if (secret === "kidus_secure_system_2026") {
-                const badge = document.getElementById('terminal-badge');
-                badge.className = "bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-200";
-                badge.innerText = "Kidusyared Liku BOUND";
-                localStorage.setItem('terminal_bound', 'true');
-            } else { alert("የተሳሳተ ቁልፍ!"); }
-        }
-
-        if(localStorage.getItem('terminal_bound') === 'true') {
-            setTimeout(() => {
-                const badge = document.getElementById('terminal-badge');
-                if(badge) {
-                    badge.className = "bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-200";
-                    badge.innerText = "Kidusyared Liku BOUND";
-                }
-            }, 100);
-        }
-
-        function checkNames() {
-            const name = document.getElementById('client-name').value;
-            const warning = document.getElementById('match-warning');
-            if(name.toLowerCase().includes('kalkidan')) { warning.classList.remove('hidden'); }
-            else { warning.classList.add('hidden'); }
-        }
-
         function toggleCopilot() { document.getElementById('copilot-modal').classList.toggle('hidden'); }
 
-        // --- DIGAF AI LOGIC ---
-        function scanDoc() {
-            const name = document.getElementById('client-name').value;
-            const loan = document.getElementById('loan-amount').value;
-            const remarks = document.getElementById('importer-text').value;
+        // --- DIGAF AI SEARCH LOGIC ---
+        function scanOrSearch() {
+            const text = document.getElementById('importer-text').value.trim();
             const aiResponse = document.getElementById('ai-response');
-            const extractedDate = document.getElementById('extracted-date');
-            const injectBtn = document.getElementById('inject-btn');
 
-            if(!name.trim()) {
-                aiResponse.innerText = "❌ ስህተት፡ እባክህ መጀመሪያ ቢያንስ የደንበኛውን ስም አስገባና እንደገና ሞክር።";
+            if(!text) {
+                aiResponse.innerText = "❌ ስህተት፡ እባክህ መጀመሪያ በSmart Importer ሳጥን ላይ የምትፈልገውን ቃል ወይም ደንበኛ ስም ጻፍ።";
                 return;
             }
 
-            aiResponse.innerText = "⏳ የፋይናንስ መረጃውን እና የብድር ደንቦችን በመመርመር ላይ ነኝ...";
+            aiResponse.innerText = "⏳ መዝገቡን በAI በመፈለግ ላይ ነኝ...";
             
             setTimeout(() => {
-                const loanFormatted = loan ? Number(loan).toLocaleString() + " ETB" : "ያልተጠቀሰ";
-                aiResponse.innerText = `🔍 የኦዲት ሪፖርት ለደቤኛ [${name}] ተጠናቋል። የተመዘገበው ብድር መጠን፡ ${loanFormatted} ነው። ማስታወሻው የተሟላ ሲሆን ለምዝገባ ብቁ ነው። ይህንን መረጃ በቀጥታ ወደ ሌጀሩ (Ledger) መላክ ትችላለህ።`;
-                extractedDate.classList.remove('hidden');
-                injectBtn.className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 rounded-xl uppercase cursor-pointer transition-all";
-                injectBtn.removeAttribute('disabled');
-            }, 900);
-        }
-
-        function injectLedger() {
-            const name = document.getElementById('client-name').value;
-            const phone = document.getElementById('client-phone').value || '-';
-            const loan = document.getElementById('loan-amount').value || '0';
-            const due = document.getElementById('due-date').value || '-';
-            const remarks = document.getElementById('importer-text').value || 'AI Generated Entry';
-
-            saveRecord(name, phone, loan, due, remarks, "✨ AI Synced");
-            clearInputs();
-            toggleCopilot();
+                const records = JSON.parse(localStorage.getItem('digaf_records') || '[]');
+                const matches = records.filter(r => r.details.toLowerCase().includes(text.toLowerCase()));
+                
+                if(matches.length > 0) {
+                    aiResponse.innerHTML = `<span class="text-emerald-400 font-bold">🎯 የተገኘ መረጃ (${matches.length})፦</span><br><br>` + 
+                    matches.map(m => `• [${m.status}] ${m.details} (${m.timestamp})`).join('<br>');
+                } else {
+                    aiResponse.innerText = `🔍 "${text}" የሚል መረጃ በሌጀሩ ላይ እስካሁን አልተመዘገበም።`;
+                }
+            }, 500);
         }
 
         // --- DATA REGISTRATION LOGIC ---
         function registerData() {
-            const nameInput = document.getElementById('client-name');
-            const phoneInput = document.getElementById('client-phone');
-            const loanInput = document.getElementById('loan-amount');
-            const dueInput = document.getElementById('due-date');
             const textInput = document.getElementById('importer-text');
-            const statusInput = document.getElementById('custom-status');
+            const statusSelect = document.getElementById('custom-status');
             
-            if (!nameInput.value.trim()) {
-                alert("እባክህ የደንበኛውን ስም አስገባ!");
+            if (!textInput.value.trim()) {
+                alert("እባክህ የምትመዘግበውን የደንበኛ መረጃ ፓስት አድርግ!");
                 return;
             }
 
-            const status = statusInput.value.trim() ? statusInput.value.trim() : "Processed";
-            saveRecord(
-                nameInput.value, 
-                phoneInput.value || '-', 
-                loanInput.value || '0', 
-                dueInput.value || '-', 
-                textInput.value || '-', 
-                status
-            );
-            
-            clearInputs();
+            saveRecord(textInput.value.trim(), statusSelect.value);
+            textInput.value = '';
         }
 
-        function clearInputs() {
-            document.getElementById('client-name').value = '';
-            document.getElementById('client-phone').value = '';
-            document.getElementById('loan-amount').value = '';
-            document.getElementById('due-date').value = '';
-            document.getElementById('importer-text').value = '';
-            document.getElementById('custom-status').value = '';
-            document.getElementById('match-warning').classList.add('hidden');
-            
-            const injectBtn = document.getElementById('inject-btn');
-            injectBtn.className = "flex-1 bg-slate-800 text-slate-500 text-xs font-bold py-3 rounded-xl uppercase transition-all cursor-not-allowed";
-            injectBtn.setAttribute('disabled', 'true');
-            document.getElementById('extracted-date').classList.add('hidden');
-        }
-
-        function saveRecord(name, phone, loan, due, remarks, status) {
+        function saveRecord(details, status) {
             const records = JSON.parse(localStorage.getItem('digaf_records') || '[]');
             const newRecord = {
                 timestamp: new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString(),
-                name: name,
-                phone: phone,
-                loan: Number(loan).toLocaleString(),
-                due: due,
-                remarks: remarks,
+                details: details,
                 status: status,
                 officer: "Kidusyared Liku"
             };
@@ -313,7 +208,7 @@
             tbody.innerHTML = '';
 
             if (records.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-slate-400 italic">ምንም የተመዘገበ የፋይናንስ መረጃ የለም።</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">ምንም የተመዘገበ መረጃ የለም።</td></tr>`;
                 return;
             }
 
@@ -321,19 +216,18 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50/80 transition-all";
                 
-                let statusBadge = `<span class="bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full font-medium text-[11px]">${r.status}</span>`;
-                if(r.status.includes('AI')) {
-                    statusBadge = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full font-medium text-[11px]">${r.status}</span>`;
-                }
+                let badgeClass = "bg-blue-50 text-blue-700 border-blue-100";
+                if (r.status === "Paid") badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
+                if (r.status === "Renewal") badgeClass = "bg-amber-50 text-amber-700 border-amber-100";
+                if (r.status === "No Response") badgeClass = "bg-red-50 text-red-700 border-red-100";
+                if (r.status === "Complete") badgeClass = "bg-indigo-50 text-indigo-700 border-indigo-100";
 
                 tr.innerHTML = `
                     <td class="px-6 py-3 font-mono text-[11px] text-slate-400">${r.timestamp}</td>
-                    <td class="px-6 py-3 font-bold text-slate-800">${r.name}</td>
-                    <td class="px-6 py-3 text-slate-500">${r.phone}</td>
-                    <td class="px-6 py-3 font-semibold text-slate-900">${r.loan}</td>
-                    <td class="px-6 py-3 font-mono text-slate-500">${r.due}</td>
-                    <td class="px-6 py-3 text-slate-600 max-w-xs truncate">${r.remarks}</td>
-                    <td class="px-6 py-3">${statusBadge}</td>
+                    <td class="px-6 py-3 font-medium text-slate-800 whitespace-pre-line">${r.details}</td>
+                    <td class="px-6 py-3">
+                        <span class="${badgeClass} border px-2.5 py-0.5 rounded-full font-bold text-[11px]">${r.status}</span>
+                    </td>
                     <td class="px-6 py-3 text-purple-600 font-semibold">${r.officer}</td>
                 `;
                 tbody.appendChild(tr);
@@ -341,13 +235,12 @@
         }
 
         function clearData() {
-            if(confirm("እርግጠኛ ነህ ሁሉንም የተመዘገቡ የፋይናንስ መረጃዎች ማጥፋት ትፈልጋለህ?")) {
+            if(confirm("እርግጠኛ ነህ ሁሉንም የተመዘገቡ መረጃዎች ማጥፋት ትፈልጋለህ?")) {
                 localStorage.removeItem('digaf_records');
                 renderLedger();
             }
         }
 
-        // --- EXPORT TO EXCEL/CSV FUNCTION ---
         function exportToExcel() {
             const records = JSON.parse(localStorage.getItem('digaf_records') || '[]');
             if (records.length === 0) {
@@ -356,13 +249,11 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Timestamp,Client Name,Phone,Loan (ETB),Due Date,Remarks,Status,Officer\n";
+            csvContent += "Timestamp,Details,Status,Officer\n";
 
             records.forEach(r => {
-                // Escape quotes to prevent CSV breakage
-                const name = `"${r.name.replace(/"/g, '""')}"`;
-                const remarks = `"${r.remarks.replace(/"/g, '""')}"`;
-                const row = `${r.timestamp},${name},${r.phone},${r.loan.replace(/,/g, '')},${r.due},${remarks},${r.status},${r.officer}`;
+                const cleanDetails = `"${r.details.replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+                const row = `${r.timestamp},${cleanDetails},${r.status},${r.officer}`;
                 csvContent += row + "\n";
             });
 
