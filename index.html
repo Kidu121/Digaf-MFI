@@ -12,7 +12,6 @@
 </head>
 <body class="bg-slate-100 flex h-screen antialiased">
 
-    <!-- SIDEBAR -->
     <div class="w-64 h-screen bg-slate-50 border-r border-slate-200 p-4 flex flex-col justify-between">
         <div>
             <div class="flex items-center space-x-2 mb-8 px-2">
@@ -34,9 +33,7 @@
         <div class="text-xs text-slate-400 px-2">Powered by Kidus • Control Panel</div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- HEADER -->
         <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <h1 class="text-sm font-bold tracking-wider text-slate-700 bg-purple-50 px-3 py-1 rounded border border-purple-100">WORKFLOW STATUS TRACKER</h1>
@@ -45,7 +42,6 @@
                     <span>System Active</span>
                 </div>
             </div>
-            <!-- UPDATED: MULTI-OFFICER DROPDOWN -->
             <div class="flex items-center space-x-2">
                 <label class="text-xs font-bold text-slate-400 uppercase">Active Officer:</label>
                 <select id="active-officer" class="bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-700 border border-slate-200 focus:outline-none focus:border-purple-500 cursor-pointer">
@@ -57,24 +53,21 @@
             </div>
         </header>
 
-        <!-- MAIN SECTION -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto p-6 space-y-6">
             
-            <!-- TOP NOTICE -->
             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
                 <div>
                     <h2 class="text-sm font-bold text-purple-900 flex items-center space-x-2">
                         <span class="w-2 h-2 bg-purple-600 rounded-full"></span>
                         <span>Client Workflow & Check Console</span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-1">መረጃዎችን ለመመዝገብም ሆነ ለመለወጥ መጀመሪያ ከላይ ስምዎን መምረጥዎን ያረጋግጡ።</p>
+                    <p class="text-xs text-slate-400 mt-1">ማሳሰቢያ፦ ሲስተሙ አዲስ ስም ሲመዘገብ ሙሉ መዝገቡን (Database) ስለሚፈትሽ በየትኛውም ስታተስ ላይ ያለን ስም በድጋሚ አይፈቅድም።</p>
                 </div>
                 <button onclick="clearData()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium border border-red-200 transition-all">
                     Reset Ledger
                 </button>
             </div>
 
-            <!-- LIVE STATUS COUNTERS -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm flex flex-col justify-between">
                     <span class="text-xs font-bold text-slate-400 uppercase">🟢 Paid Status</span>
@@ -94,10 +87,8 @@
                 </div>
             </div>
 
-            <!-- SEARCH & REGISTER CONTROL PANEL -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                <!-- 1. REGISTER BOX -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
                     <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-purple-700">➕ 1. Register New Client (አዲስ ደንበኛ መመዝገቢያ)</h3>
                     <div class="space-y-3">
@@ -120,7 +111,6 @@
                     </div>
                 </div>
 
-                <!-- 2. LIVE SEARCH BOX -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4 bg-purple-50/30">
                     <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider text-emerald-700">🔍 2. Check & Filter Ledger (መዝገብ መፈተኛ ሳጥን)</h3>
                     <div class="space-y-3">
@@ -129,14 +119,13 @@
                             <input type="text" id="search-input" oninput="filterLedger()" placeholder="ለመፈተሽ የደንበኛውን ስም እዚህ መጻፍ ይጀምሩ..." class="w-full px-3 py-2.5 bg-white border border-emerald-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-emerald-500 font-medium shadow-sm">
                         </div>
                         <div class="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-500 leading-relaxed">
-                            👤 <span class="font-bold text-slate-700">ማስታወሻ፦</span> መረጃዎችን ሲመዘግቡ ወይም ስታተስ ሲቀይሩ በራስዎ ስም መመዝገቡን ለማረጋገጥ ከላይ በቀኝ በኩል ስምዎን ይምረጡ።
+                            🔒 <span class="font-bold text-emerald-800">ግሎባል መከላከያ ገብቷል፦</span> አሁን ማጣሪያው (Filter) በርቶ ቢሆንም እንኳ፣ አዲስ ሰው ሲመዘገብ ሲስተሙ ሙሉ የጀርባ ዳታውን ስላይድ የሚያደርግ በመሆኑ ማንኛውንም አይነት ድግግሞሽ 100% ይከላከላል።
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- REGISTERED CLIENTS TABLE -->
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                     <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">📋 Active Workflow Ledger</h3>
@@ -155,8 +144,7 @@
                             </tr>
                         </thead>
                         <tbody id="ledger-rows" class="divide-y divide-slate-200 text-xs text-slate-700">
-                            <!-- Data injected here -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -170,7 +158,7 @@
             renderLedger();
         });
 
-        // --- REGISTER ---
+        // --- FIXED: SECURE REGISTER WITH GLOBAL DUPLICATE CHECK ---
         function registerClient() {
             const nameInput = document.getElementById('client-name');
             const statusSelect = document.getElementById('custom-status');
@@ -182,12 +170,14 @@
                 return;
             }
 
-            const records = JSON.parse(localStorage.getItem('digaf_records') || '[]');
+            // CRITICAL FIX: Always pull directly from raw LocalStorage data to bypass any UI active filter state
+            const rawRecords = JSON.parse(localStorage.getItem('digaf_records') || '[]');
             
-            const isDuplicate = records.some(r => r.name.toLowerCase() === inputName.toLowerCase());
+            // Look across EVERY status in the core database
+            const foundRecord = rawRecords.find(r => r.name.toLowerCase() === inputName.toLowerCase());
             
-            if (isDuplicate) {
-                alert(`⚠️ ስህተት፡ "${inputName}" የተባለው ደንበኛ አስቀድሞ በመዝገቡ ላይ ተመዝግቧል!`);
+            if (foundRecord) {
+                alert(`⚠️ ስህተት፡ "${inputName}" የተባለው ደንበኛ አስቀድሞ በመዝገቡ ላይ በ [${foundRecord.status}] ስታተስ ተመዝግቧል! ድጋሚ መመዝገብ አይቻልም።`);
                 return;
             }
 
@@ -203,8 +193,8 @@
                 timestamp: currentTime
             };
             
-            records.unshift(newRecord);
-            localStorage.setItem('digaf_records', JSON.stringify(records));
+            rawRecords.unshift(newRecord);
+            localStorage.setItem('digaf_records', JSON.stringify(rawRecords));
             
             nameInput.value = ''; 
             renderLedger();
@@ -218,7 +208,7 @@
             
             if (clientIndex !== -1) {
                 records[clientIndex].status = newStatus;
-                records[clientIndex].updatedBy = officerSelect.value; // Track who made the change
+                records[clientIndex].updatedBy = officerSelect.value;
                 records[clientIndex].timestamp = new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString();
                 localStorage.setItem('digaf_records', JSON.stringify(records));
                 renderLedger();
@@ -274,7 +264,6 @@
                 if (r.status === "No Response") selectColorClass = "border-red-200 text-red-700 bg-red-50";
                 if (r.status === "Complete") selectColorClass = "border-indigo-200 text-indigo-700 bg-indigo-50";
 
-                // Handle backward compatibility if older records don't have createdBy
                 const creator = r.createdBy || "System";
                 const updater = r.updatedBy || "System";
 
@@ -327,7 +316,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Digaf_MultiOfficer_Track_${new Date().toLocaleDateString()}.csv`);
+            link.setAttribute("download", `Digaf_Global_Track_${new Date().toLocaleDateString()}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
