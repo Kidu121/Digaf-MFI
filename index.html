@@ -409,24 +409,6 @@
 
 
         // --- ➕ REGISTER NEW CLIENT ON SUPABASE ---
-        // ... የቀድሞ ኮዶችህ ...
-
-// ይህንን አዲስ function እዚህ ጋር ጨምር
-async function deleteRecord(clientId) {
-    if (!confirm("ይህንን መረጃ በእርግጥ መሰረዝ ይፈልጋሉ?")) return;
-    try {
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?id=eq.${clientId}`, {
-            method: 'DELETE',
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-        });
-        if (!response.ok) throw new Error("Delete failed");
-        await fetchRecordsFromCloud();
-    } catch (err) { alert("መረጃውን መሰረዝ አልተቻለም!"); }
-}
-
-// --- 🔄 UPDATE STATUS LIVE ON SUPABASE ---
-async function updateStatus(clientId, newStatus) { 
-// ... የተቀረው ኮድህ ይቀጥላል ...
 
         async function registerClient() {
 
@@ -795,28 +777,6 @@ async function updateStatus(clientId, newStatus) {
                         <div class="text-purple-700 font-semibold mt-0.5">Edit: ${r.updated_by || 'System'}</div>
 
                         <div class="text-[10px] text-slate-400 font-mono mt-0.5">${r.timestamp}</div>
-                        // በኮድህ ውስጥ ይህንን ክፍል ፈልገህ በሰጠሁህ አዲሱ ኮድ ተካው፡
-// (ይህ ክፍል የrenderLedger function ውስጥ ነው የሚገኘው)
-
-tr.innerHTML = `
-    <td class="px-6 py-3">
-        <div class="font-bold text-slate-800 text-sm">${r.name}</div>
-    </td>
-    <td class="px-6 py-3">
-        <select onchange="updateStatus('${r.id}', this.value)" class="${badgeColor} ...">
-            ... (የእርስዎ የselect አማራጮች) ...
-        </select>
-    </td>
-    <td class="px-6 py-3 text-slate-500 font-medium">
-        <div class="text-slate-600 text-[11px]">By: <span class="font-bold text-slate-800">${r.created_by || 'System'}</span></div>
-        <div class="text-purple-700 font-semibold mt-0.5">Edit: ${r.updated_by || 'System'}</div>
-        <div class="text-[10px] text-slate-400 font-mono mt-0.5">${r.timestamp}</div>
-        
-        <button onclick="deleteRecord('${r.id}')" class="mt-2 text-red-500 hover:text-red-700 font-bold text-[10px] uppercase underline cursor-pointer">
-            Delete
-        </button>
-    </td>
-`;
 
                     </td>
 
