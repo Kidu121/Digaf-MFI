@@ -347,14 +347,12 @@
 
     <!-- SUPABASE SYNC LOGIC -->
 
-   <script>
+<script>
     // --- ⚠️ የአንተ የ Supabase ኮዶች ⚠️ ---
     const SUPABASE_URL = "https://logercqzvkwfibaumcvf.supabase.co"; 
     const SUPABASE_ANON_KEY = "sb_publishable_aWSqUZw9NaQDS6yDcwJhJw_79ZERzZ4";
 
     let globalRecords = [];
-    let currentSearchQuery = "";
-    let activeStatusFilter = ""; 
 
     document.addEventListener('DOMContentLoaded', () => {
         fetchRecordsFromCloud();
@@ -377,7 +375,9 @@
             globalRecords.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
             
             document.getElementById('sync-status').innerText = "Cloud Live Sync Active";
-            renderLedger();
+            
+            // በነባሪ (Default) የዛሬውን መረጃ አሳይ
+            filterByPreset('today');
         } catch (err) {
             console.error(err);
             document.getElementById('sync-status').innerText = "Sync Connection Error!";
@@ -410,7 +410,6 @@
         const inputName = nameInput.value.trim();
         if (!inputName) { alert("እባክዎ መጀመሪያ የደንበኛ ስም ያስገቡ!"); return; }
 
-        // Timestamp ቅርጸት: "HH:MM:SS MM/DD/YYYY"
         const now = new Date();
         const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
 
@@ -491,12 +490,9 @@
             filtered = globalRecords.filter(r => r.timestamp.includes(todayStr));
         } else if (type === 'yesterday') {
             filtered = globalRecords.filter(r => r.timestamp.includes(yesterdayStr));
-        } else {
-            // ሁሉንም አሳይ
-            document.getElementById('date-from').value = "";
-            document.getElementById('date-to').value = "";
         }
         
+        updateCounterCards(filtered);
         renderLedger(filtered);
     }
 
@@ -505,8 +501,6 @@
         const tbody = document.getElementById('ledger-rows');
         const recordsToRender = data || globalRecords;
         
-        updateCounterCards(recordsToRender);
-
         tbody.innerHTML = '';
         if (recordsToRender.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">ምንም መረጃ አልተገኘም።</td></tr>`;
