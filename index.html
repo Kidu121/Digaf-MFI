@@ -375,13 +375,21 @@
             globalRecords.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
             
             document.getElementById('sync-status').innerText = "Cloud Live Sync Active";
-            
-            // ሲከፈት በነባሪ የዛሬውን አሳይ
             filterByPreset('today');
         } catch (err) {
             console.error(err);
             document.getElementById('sync-status').innerText = "Sync Connection Error!";
         }
+    }
+
+    // --- 🔍 FILTER LEDGER (አዲሱ የፍለጋ ተግባር) ---
+    function filterLedger() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const filtered = globalRecords.filter(r => 
+            r.name.toLowerCase().includes(query)
+        );
+        updateCounterCards(filtered);
+        renderLedger(filtered);
     }
 
     // --- 🔢 UPDATE COUNTER CARDS ---
@@ -411,14 +419,13 @@
         if (!inputName) { alert("እባክዎ መጀመሪያ የደንበኛ ስም ያስገቡ!"); return; }
 
         const now = new Date();
-        const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
+        const currentTime = (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
 
         const newRecord = {
-            id: 'client_' + Date.now() + Math.random().toString(36).substr(2, 4),
+            id: 'client_' + Date.now(),
             name: inputName,
             status: statusSelect.value,
             created_by: officerSelect.value,
-            updated_by: officerSelect.value,
             timestamp: currentTime
         };
         
@@ -428,7 +435,8 @@
                 headers: {
                     'apikey': SUPABASE_ANON_KEY,
                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=representation'
                 },
                 body: JSON.stringify(newRecord)
             });
@@ -439,10 +447,6 @@
 
     // --- 🔄 UPDATE STATUS ---
     async function updateStatus(clientId, newStatus) {
-        const officerSelect = document.getElementById('active-officer');
-        const now = new Date();
-        const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
-        
         try {
             await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?id=eq.${clientId}`, {
                 method: 'PATCH',
@@ -451,7 +455,7 @@
                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ status: newStatus, updated_by: officerSelect.value, timestamp: currentTime })
+                body: JSON.stringify({ status: newStatus })
             });
             await fetchRecordsFromCloud();
         } catch (err) { alert("መለወጥ አልተቻለም!"); }
@@ -469,81 +473,42 @@
         } catch (err) { alert("መሰረዝ አልተቻለም!"); }
     }
 
-    // --- 🗓️ DATE PRESET FILTER ---
+    // --- 🗓️ DATE & STATUS FILTERS ---
     function filterByPreset(type) {
         const today = new Date();
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-
-        const formatDate = (d) => {
-            const mm = (d.getMonth() + 1).toString().padStart(2, '0');
-            const dd = d.getDate().toString().padStart(2, '0');
-            const yy = d.getFullYear();
-            return `${mm}/${dd}/${yy}`;
-        };
-        
+        const formatDate = (d) => `${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')}/${d.getFullYear()}`;
         const todayStr = formatDate(today);
-        const yesterdayStr = formatDate(yesterday);
+        
         let filtered = globalRecords;
-
-        if (type === 'today') {
-            filtered = globalRecords.filter(r => r.timestamp.includes(todayStr));
-        } else if (type === 'yesterday') {
-            filtered = globalRecords.filter(r => r.timestamp.includes(yesterdayStr));
-        }
+        if (type === 'today') filtered = globalRecords.filter(r => r.timestamp === todayStr);
         
         updateCounterCards(filtered);
         renderLedger(filtered);
     }
 
-    // --- 🔘 STATUS FILTER ---
     function setStatusFilter(status) {
-        let filtered = globalRecords;
-        if (status) {
-            filtered = globalRecords.filter(r => r.status === status);
-        }
+        const filtered = status ? globalRecords.filter(r => r.status === status) : globalRecords;
         updateCounterCards(filtered);
         renderLedger(filtered);
     }
 
     // --- 🖥️ RENDER SCREEN ---
-    function renderLedger(data = null) {
+    function renderLedger(data) {
         const tbody = document.getElementById('ledger-rows');
-        const recordsToRender = data || globalRecords;
-        
         tbody.innerHTML = '';
-        if (recordsToRender.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">ምንም መረጃ አልተገኘም።</td></tr>`;
-            return;
-        }
-
-        recordsToRender.forEach(r => {
+        data.forEach(r => {
             const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50/80 transition-all border-b border-slate-100";
-            
-            let badgeColor = "border-blue-200 text-blue-700 bg-blue-50";
-            if (r.status === "Paid") badgeColor = "border-emerald-200 text-emerald-700 bg-emerald-50";
-            if (r.status === "Renewal") badgeColor = "border-amber-200 text-amber-700 bg-amber-50";
-            if (r.status === "No Response") badgeColor = "border-red-200 text-red-700 bg-red-50";
-            if (r.status === "Complete") badgeColor = "border-indigo-200 text-indigo-700 bg-indigo-50";
-
             tr.innerHTML = `
-                <td class="px-6 py-3"><div class="font-bold text-slate-800 text-sm">${r.name}</div></td>
+                <td class="px-6 py-3 font-bold">${r.name}</td>
                 <td class="px-6 py-3">
-                    <div class="flex items-center space-x-2">
-                        <select onchange="updateStatus('${r.id}', this.value)" class="${badgeColor} border rounded-lg text-xs font-bold px-3 py-1.5 focus:outline-none cursor-pointer w-32">
-                            <option value="Renewal" ${r.status === 'Renewal' ? 'selected' : ''}>🟡 Renewal</option>
-                            <option value="Paid" ${r.status === 'Paid' ? 'selected' : ''}>🟢 Paid</option>
-                            <option value="No Response" ${r.status === 'No Response' ? 'selected' : ''}>🔴 No Response</option>
-                            <option value="Complete" ${r.status === 'Complete' ? 'selected' : ''}>🔵 Complete</option>
-                        </select>
-                        <button onclick="deleteRecord('${r.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs px-2">❌</button>
-                    </div>
+                    <select onchange="updateStatus('${r.id}', this.value)" class="border rounded px-2 py-1 text-xs">
+                        <option value="Renewal" ${r.status === 'Renewal' ? 'selected' : ''}>🟡 Renewal</option>
+                        <option value="Paid" ${r.status === 'Paid' ? 'selected' : ''}>🟢 Paid</option>
+                        <option value="No Response" ${r.status === 'No Response' ? 'selected' : ''}>🔴 No Response</option>
+                        <option value="Complete" ${r.status === 'Complete' ? 'selected' : ''}>🔵 Complete</option>
+                    </select>
                 </td>
-                <td class="px-6 py-3 text-slate-500 font-medium text-[11px]">
-                    <div>By: <span class="font-bold text-slate-800">${r.created_by || 'System'}</span></div>
-                    <div class="text-slate-400 font-mono">${r.timestamp}</div>
-                </td>
+                <td class="px-6 py-3 text-[11px]">${r.created_by}<br>${r.timestamp}</td>
             `;
             tbody.appendChild(tr);
         });
