@@ -287,6 +287,11 @@
         <input type="date" id="date-to" onchange="filterByDate()" class="w-full px-2 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium focus:border-purple-500 outline-none">
     </div>
 </div>
+                    <div class="flex space-x-2 mt-4">
+    <button onclick="filterByPreset('today')" class="bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-200">ዛሬ (Today)</button>
+    <button onclick="filterByPreset('yesterday')" class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">ትናንት (Yesterday)</button>
+    <button onclick="filterByPreset('all')" class="bg-slate-50 text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold border">ሁሉም (All)</button>
+</div>
 
                 </div>
 
@@ -450,8 +455,6 @@
 
             }
 
-
-
             const currentTime = new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString();
 
             const activeOfficer = officerSelect.value;
@@ -473,8 +476,6 @@
                 timestamp: currentTime
 
             };
-
-
 
             try {
 
@@ -498,11 +499,7 @@
 
                 });
 
-
-
                 if (!response.ok) throw new Error("Insert failed");
-
-                
 
                 nameInput.value = ''; 
 
@@ -522,8 +519,6 @@
 
         }
 
-
-
         // --- 🔄 UPDATE STATUS LIVE ON SUPABASE ---
 
         async function updateStatus(clientId, newStatus) {
@@ -531,8 +526,6 @@
             const officerSelect = document.getElementById('active-officer');
 
             const currentTime = new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString();
-
-
 
             try {
 
@@ -565,7 +558,6 @@
                 });
 
 
-
                 if (!response.ok) throw new Error("Update failed");
 
                 await fetchRecordsFromCloud();
@@ -575,7 +567,6 @@
                 alert("ስታተሱን መለወጥ አልተቻለም!");
 
             }
-
         }
 // --- 🗑️ DELETE RECORD FROM SUPABASE ---
 async function deleteRecord(clientId) {
@@ -601,7 +592,6 @@ async function deleteRecord(clientId) {
     }
 }
 
-
         // --- QUICK CARD FILTER ---
 
         function setStatusFilter(status) {
@@ -625,8 +615,6 @@ async function deleteRecord(clientId) {
             renderLedger();
 
         }
-
-
 
         function updateCardUI() {
 
@@ -691,14 +679,46 @@ async function deleteRecord(clientId) {
         }
 
 // --- RENDER SCREEN (በቀን ማጣሪያ የተስተካከለ) ---
-function renderLedger() {
+// --- PRESET DATE FILTER LOGIC ---
+function filterByPreset(type) {
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    // ቀንህን የምትጽፍበት ቅርጸት (ከ timestamp ጋር እንዲመሳሰል)
+    const formatDate = (d) => {
+        const mm = (d.getMonth() + 1).toString().padStart(2, '0');
+        const dd = d.getDate().toString().padStart(2, '0');
+        const yy = d.getFullYear();
+        return `${mm}/${dd}/${yy}`;
+    };
+    
+    const todayStr = formatDate(today);
+    const yesterdayStr = formatDate(yesterday);
+
+    let filtered = globalRecords;
+
+    if (type === 'today') {
+        filtered = globalRecords.filter(r => r.timestamp.includes(todayStr));
+    } else if (type === 'yesterday') {
+        filtered = globalRecords.filter(r => r.timestamp.includes(yesterdayStr));
+    } else {
+        // 'all' ሲመረጥ ማጣሪያዎቹን እናጸዳለን
+        document.getElementById('date-from').value = "";
+        document.getElementById('date-to').value = "";
+    }
+
+    renderLedger(filtered);
+}
+
+// --- RENDER SCREEN (UPDATED) ---
+// ይህ ተግባር parameter እንዲቀበል ተደርጓል
+function renderLedger(data = null) {
     const tbody = document.getElementById('ledger-rows');
-    // ከ HTML ላይ የገባውን ቀን እናነባለን
-    const fromDate = document.getElementById('date-from')?.value;
-    const toDate = document.getElementById('date-to')?.value;
-
+    const recordsToRender = data || globalRecords;
+    
+    // ቆጠራውን ለማዘመን
     let paid = 0, renewal = 0, nores = 0, comp = 0;
-
     globalRecords.forEach(r => {
         if (r.status === "Paid") paid++;
         if (r.status === "Renewal") renewal++;
@@ -714,34 +734,12 @@ function renderLedger() {
 
     tbody.innerHTML = '';
 
-    // ማጣሪያዎች (Filters)
-    let filtered = globalRecords;
-
-    // 1. በቀን ማጣሪያ (Date Filter)
-    if (fromDate && toDate) {
-        filtered = globalRecords.filter(r => {
-            // የtimestamp ቅርጸቱ (ለምሳሌ: "15:30:00 06/21/2026")
-            const datePart = r.timestamp.split(' ')[1]; 
-            const [m, d, y] = datePart.split('/');
-            const recordDate = new Date(`${y}-${m}-${d}`);
-            return recordDate >= new Date(fromDate) && recordDate <= new Date(toDate);
-        });
-    } 
-    // 2. በስታተስ ማጣሪያ
-    else if (activeStatusFilter) {
-        filtered = globalRecords.filter(r => r.status === activeStatusFilter);
-    } 
-    // 3. በስም ፍለጋ
-    else if (currentSearchQuery) {
-        filtered = globalRecords.filter(r => r.name.toLowerCase().includes(currentSearchQuery));
-    }
-
-    if (filtered.length === 0) {
+    if (recordsToRender.length === 0) {
         tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">ምንም መረጃ አልተገኘም።</td></tr>`;
         return;
     }
 
-    filtered.forEach(r => {
+    recordsToRender.forEach(r => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50/80 transition-all border-b border-slate-100";
         
@@ -752,9 +750,7 @@ function renderLedger() {
         if (r.status === "Complete") badgeColor = "border-indigo-200 text-indigo-700 bg-indigo-50";
 
         tr.innerHTML = `
-            <td class="px-6 py-3">
-                <div class="font-bold text-slate-800 text-sm">${r.name}</div>
-            </td>
+            <td class="px-6 py-3"><div class="font-bold text-slate-800 text-sm">${r.name}</div></td>
             <td class="px-6 py-3">
                 <div class="flex items-center space-x-2">
                     <select onchange="updateStatus('${r.id}', this.value)" class="${badgeColor} border rounded-lg text-xs font-bold px-3 py-1.5 focus:outline-none cursor-pointer w-32">
@@ -768,7 +764,6 @@ function renderLedger() {
             </td>
             <td class="px-6 py-3 text-slate-500 font-medium text-[11px]">
                 <div>By: <span class="font-bold text-slate-800">${r.created_by || 'System'}</span></div>
-                <div class="text-purple-700">Edit: ${r.updated_by || 'System'}</div>
                 <div class="text-slate-400 font-mono">${r.timestamp}</div>
             </td>
         `;
