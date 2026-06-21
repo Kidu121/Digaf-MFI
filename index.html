@@ -410,7 +410,10 @@
         const inputName = nameInput.value.trim();
         if (!inputName) { alert("እባክዎ መጀመሪያ የደንበኛ ስም ያስገቡ!"); return; }
 
-        const currentTime = new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString();
+        // Timestamp ቅርጸት: "HH:MM:SS MM/DD/YYYY"
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
+
         const newRecord = {
             id: 'client_' + Date.now() + Math.random().toString(36).substr(2, 4),
             name: inputName,
@@ -438,7 +441,9 @@
     // --- 🔄 UPDATE STATUS ---
     async function updateStatus(clientId, newStatus) {
         const officerSelect = document.getElementById('active-officer');
-        const currentTime = new Date().toLocaleTimeString() + ' ' + new Date().toLocaleDateString();
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
+        
         try {
             await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?id=eq.${clientId}`, {
                 method: 'PATCH',
@@ -487,11 +492,11 @@
         } else if (type === 'yesterday') {
             filtered = globalRecords.filter(r => r.timestamp.includes(yesterdayStr));
         } else {
+            // ሁሉንም አሳይ
             document.getElementById('date-from').value = "";
             document.getElementById('date-to').value = "";
         }
         
-        updateCounterCards(filtered);
         renderLedger(filtered);
     }
 
@@ -500,7 +505,6 @@
         const tbody = document.getElementById('ledger-rows');
         const recordsToRender = data || globalRecords;
         
-        // ካርዶቹን ለማዘመን
         updateCounterCards(recordsToRender);
 
         tbody.innerHTML = '';
@@ -541,7 +545,5 @@
         });
     }
 </script>
-
 </body>
-
 </html>
