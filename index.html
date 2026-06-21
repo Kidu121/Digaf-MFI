@@ -807,72 +807,52 @@
     // --- ➕ REGISTER NEW CLIENT ---
 
     async function registerClient() {
+    const nameInput = document.getElementById('client-name');
+    const inputName = nameInput.value.trim();
+    
+    if (!inputName) { alert("እባክዎ መጀመሪያ የደንበኛ ስም ያስገቡ!"); return; }
 
-        const nameInput = document.getElementById('client-name');
+    // 1. መደጋገሙን መፈተሽ (Check for duplicates)
+    const isDuplicate = globalRecords.some(record => 
+        record.name.toLowerCase() === inputName.toLowerCase()
+    );
 
-        const statusSelect = document.getElementById('custom-status');
-
-        const officerSelect = document.getElementById('active-officer');
-
-
-
-        const inputName = nameInput.value.trim();
-
-        if (!inputName) { alert("እባክዎ መጀመሪያ የደንበኛ ስም ያስገቡ!"); return; }
-
-
-
-        const now = new Date();
-
-        const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
-
-
-
-        const newRecord = {
-
-            id: 'client_' + Date.now() + Math.random().toString(36).substr(2, 4),
-
-            name: inputName,
-
-            status: statusSelect.value,
-
-            created_by: officerSelect.value,
-
-            updated_by: officerSelect.value,
-
-            timestamp: currentTime
-
-        };
-
-        
-
-        try {
-
-            await fetch(`${SUPABASE_URL}/rest/v1/digaf_records`, {
-
-                method: 'POST',
-
-                headers: {
-
-                    'apikey': SUPABASE_ANON_KEY,
-
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-
-                    'Content-Type': 'application/json'
-
-                },
-
-                body: JSON.stringify(newRecord)
-
-            });
-
-            nameInput.value = ''; 
-
-            await fetchRecordsFromCloud(); 
-
-        } catch (err) { alert("መመዝገብ አልተቻለም!"); }
-
+    if (isDuplicate) {
+        alert("ይህ ደንበኛ ቀድሞ ተመዝግቧል! እባክዎ ሌላ ስም ይሞክሩ።");
+        return; // እዚህ ላይ እናቆመዋለን፣ ወደ ዳታቤዝ አይላክም
     }
+
+    // 2. መደጋገም ከሌለ ብቻ ይቀጥላል
+    const statusSelect = document.getElementById('custom-status');
+    const officerSelect = document.getElementById('active-officer');
+
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString('en-US', { hour12: false }) + ' ' + (now.getMonth() + 1).toString().padStart(2, '0') + '/' + now.getDate().toString().padStart(2, '0') + '/' + now.getFullYear();
+
+    const newRecord = {
+        id: 'client_' + Date.now() + Math.random().toString(36).substr(2, 4),
+        name: inputName,
+        status: statusSelect.value,
+        created_by: officerSelect.value,
+        updated_by: officerSelect.value,
+        timestamp: currentTime
+    };
+
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/digaf_records`, {
+            method: 'POST',
+            headers: { 
+                'apikey': SUPABASE_ANON_KEY, 
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            },
+            body: JSON.stringify(newRecord)
+        });
+        nameInput.value = ''; 
+        await fetchRecordsFromCloud(); // አዲስ መረጃውን ከዳታቤዝ መልሶ ለማምጣት
+    } catch (err) { alert("መመዝገብ አልተቻለም!"); }
+}
 
 
 
