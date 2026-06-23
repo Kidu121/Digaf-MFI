@@ -709,13 +709,19 @@
     let globalRecords = [];
 
 
-
+// --- አዲሱ ማስተካከያ: ገጹ ሲጫን የነበረውን ኦፊሰር መጫን ---
     document.addEventListener('DOMContentLoaded', () => {
-
+        const savedOfficer = localStorage.getItem('activeOfficer');
+        if (savedOfficer) {
+            document.getElementById('active-officer').value = savedOfficer;
+        }
         fetchRecordsFromCloud();
-
     });
 
+    // --- አዲሱ ማስተካከያ: ኦፊሰር ሲቀየር በLocalStorage ማስቀመጥ ---
+    document.getElementById('active-officer').addEventListener('change', (e) => {
+        localStorage.setItem('activeOfficer', e.target.value);
+    });
 
 
     // --- 📥 FETCH FROM SUPABASE ---
