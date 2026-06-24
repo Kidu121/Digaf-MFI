@@ -712,19 +712,17 @@
 
 function loginOfficer() {
     const selector = document.getElementById('login-officer');
-    const headerSelect = document.getElementById('active-officer');
-    
     if (!selector.value) {
         alert("እባክዎ ስምዎን ይምረጡ!");
         return;
     }
-
-    // ስሙን በLocalStorage ያስቀምጣል
-    localStorage.setItem('loggedInOfficer', selector.value);
-
-    headerSelect.value = selector.value;
-    headerSelect.disabled = true;
+    loggedInUser = selector.value;
     document.getElementById('login-overlay').style.display = 'none';
+    
+    // የላይኛውን Header's Select Box መደበቅ ወይም በተመረጠው ስም መቆለፍ
+    const headerSelect = document.getElementById('active-officer');
+    headerSelect.value = loggedInUser;
+    headerSelect.disabled = true; // ኦፊሰሩ ስሙን እንዳይቀይር መቆለፍ
 }
 
     // --- ⚠️ የአንተ የ Supabase ኮዶች ⚠️ ---
@@ -740,16 +738,8 @@ function loginOfficer() {
 
 
     document.addEventListener('DOMContentLoaded', () => {
-    fetchRecordsFromCloud();
 
-    // ቀድሞ የተመረጠ ኦፊሰር ካለ በራስ-ሰር ይግባ
-    const savedOfficer = localStorage.getItem('loggedInOfficer');
-    if (savedOfficer) {
-        const headerSelect = document.getElementById('active-officer');
-        headerSelect.value = savedOfficer;
-        headerSelect.disabled = true;
-        document.getElementById('login-overlay').style.display = 'none';
-    }
+        fetchRecordsFromCloud();
 
     });
 
