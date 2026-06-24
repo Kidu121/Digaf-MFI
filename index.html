@@ -712,17 +712,19 @@
 
 function loginOfficer() {
     const selector = document.getElementById('login-officer');
+    const headerSelect = document.getElementById('active-officer');
+    
     if (!selector.value) {
         alert("እባክዎ ስምዎን ይምረጡ!");
         return;
     }
-    loggedInUser = selector.value;
+
+    // ስሙን በLocalStorage ያስቀምጣል
+    localStorage.setItem('loggedInOfficer', selector.value);
+
+    headerSelect.value = selector.value;
+    headerSelect.disabled = true;
     document.getElementById('login-overlay').style.display = 'none';
-    
-    // የላይኛውን Header's Select Box መደበቅ ወይም በተመረጠው ስም መቆለፍ
-    const headerSelect = document.getElementById('active-officer');
-    headerSelect.value = loggedInUser;
-    headerSelect.disabled = true; // ኦፊሰሩ ስሙን እንዳይቀይር መቆለፍ
 }
 
     // --- ⚠️ የአንተ የ Supabase ኮዶች ⚠️ ---
