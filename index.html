@@ -716,15 +716,19 @@ function loginOfficer() {
         alert("እባክዎ ስምዎን ይምረጡ!");
         return;
     }
-    loggedInUser = selector.value;
-    document.getElementById('login-overlay').style.display = 'none';
     
-    // የላይኛውን Header's Select Box መደበቅ ወይም በተመረጠው ስም መቆለፍ
-    const headerSelect = document.getElementById('active-officer');
-    headerSelect.value = loggedInUser;
-    headerSelect.disabled = true; // ኦፊሰሩ ስሙን እንዳይቀይር መቆለፍ
+    // ስሙን በብሮውዘር ላይ ያስቀምጣል
+    localStorage.setItem('loggedInOfficer', selector.value);
+    
+    applyOfficer(selector.value);
+    document.getElementById('login-overlay').style.display = 'none';
 }
 
+function applyOfficer(name) {
+    const headerSelect = document.getElementById('active-officer');
+    headerSelect.value = name;
+    headerSelect.disabled = true;
+}
     // --- ⚠️ የአንተ የ Supabase ኮዶች ⚠️ ---
 
     const SUPABASE_URL = "https://logercqzvkwfibaumcvf.supabase.co"; 
@@ -737,11 +741,22 @@ function loginOfficer() {
 
 
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // --- 🚀 INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    fetchRecordsFromCloud();
 
-        fetchRecordsFromCloud();
-
-    });
+    // ቀድሞ የተመረጠ ኦፊሰር ካለ በራስ-ሰር ይግባ (Session Persistence)
+    const savedOfficer = localStorage.getItem('loggedInOfficer');
+    if (savedOfficer) {
+        // የHeader Select ሳጥኑን ያዘምናል
+        const headerSelect = document.getElementById('active-officer');
+        headerSelect.value = savedOfficer;
+        headerSelect.disabled = true; // ኦፊሰሩ እንዳይቀይረው ይቆልፈዋል
+        
+        // የሎጊን ገጹን ይደብቀዋል
+        document.getElementById('login-overlay').style.display = 'none';
+    }
+});
 
 
 
