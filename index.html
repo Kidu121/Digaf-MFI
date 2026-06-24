@@ -41,13 +41,17 @@
 
 
 
-<body class="bg-slate-100 flex h-screen antialiased">
-    <div id="login-overlay" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-96 text-center">
-        <h2 class="text-xl font-bold text-purple-900 mb-6">Welcome to Digaf MFI</h2>
-        <p class="text-sm text-slate-500 mb-4">እባክዎ በመቀጠል ስምዎን ይምረጡ</p>
-        <select id="login-officer" class="w-full mb-6 px-4 py-3 bg-slate-100 rounded-lg font-bold text-purple-700">
-            <option value="">ስምዎን ይምረጡ...</option>
+<header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+        <h1 class="text-sm font-bold tracking-wider text-slate-700 bg-purple-50 px-3 py-1 rounded border border-purple-100">SMART FINANCE IMPORTER</h1>
+        <div class="flex items-center space-x-1 text-xs text-emerald-600 font-medium">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span id="sync-status">Cloud Live Sync Active</span>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-4">
+        <select id="active-officer" class="bg-slate-100 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-700 border border-slate-200 focus:outline-none focus:border-purple-500 cursor-pointer">
             <option value="Kidus">Kidus</option>
             <option value="Samuel">Samuel</option>
             <option value="Suraphel">Suraphel</option>
@@ -55,12 +59,11 @@
             <option value="Ezana">Ezana</option>
             <option value="Zewdneh">Zewdneh</option>
         </select>
-        <button onclick="loginOfficer()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700">ወደ ሲስተሙ ግቡ</button>
-        <button onclick="logoutOfficer()" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-100">
-    Logout
-</button>
+        <button onclick="logoutOfficer()" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition-all border border-red-200">
+            Logout
+        </button>
     </div>
-</div>
+</header>
 
 
 
@@ -713,25 +716,39 @@
 <script>
     let loggedInUser = "";
 
-function loginOfficer() {
-    const selector = document.getElementById('login-officer');
-    if (!selector.value) {
-        alert("እባክዎ ስምዎን ይምረጡ!");
-        return;
+// --- 🔐 LOGIN/LOGOUT LOGIC ---
+    function loginOfficer() {
+        const selector = document.getElementById('login-officer');
+        if (!selector.value) {
+            alert("እባክዎ ስምዎን ይምረጡ!");
+            return;
+        }
+        localStorage.setItem('loggedInOfficer', selector.value);
+        applyOfficer(selector.value);
+        document.getElementById('login-overlay').style.display = 'none';
     }
-    
-    // ስሙን በብሮውዘር ላይ ያስቀምጣል
-    localStorage.setItem('loggedInOfficer', selector.value);
-    
-    applyOfficer(selector.value);
-    document.getElementById('login-overlay').style.display = 'none';
-}
 
-function applyOfficer(name) {
-    const headerSelect = document.getElementById('active-officer');
-    headerSelect.value = name;
-    headerSelect.disabled = true;
-}
+    function logoutOfficer() {
+        localStorage.removeItem('loggedInOfficer');
+        location.reload(); // ገጹን ያድሳል ወደ Login Overlay ይመልሳል
+    }
+
+    function applyOfficer(name) {
+        const headerSelect = document.getElementById('active-officer');
+        headerSelect.value = name;
+        headerSelect.disabled = true;
+    }
+
+    // --- 🚀 INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchRecordsFromCloud();
+
+        const savedOfficer = localStorage.getItem('loggedInOfficer');
+        if (savedOfficer) {
+            applyOfficer(savedOfficer);
+            document.getElementById('login-overlay').style.display = 'none';
+        }
+    });
     // --- ⚠️ የአንተ የ Supabase ኮዶች ⚠️ ---
 
     const SUPABASE_URL = "https://logercqzvkwfibaumcvf.supabase.co"; 
