@@ -1091,7 +1091,7 @@ async function updateRemark(clientId, remarkValue) {
     updateCounterCards(filtered);
 }
 
-    function renderLedger(data = null) {
+   function renderLedger(data = null) {
     const tbody = document.getElementById('ledger-rows');
     const recordsToRender = data || globalRecords;
     
@@ -1136,14 +1136,20 @@ async function updateRemark(clientId, remarkValue) {
                 </div>
             </td>
             <td class="px-6 py-3 text-slate-500 font-medium text-[11px]">
-                <div>By: <span class="font-bold text-slate-800">${r.created_by || 'System'}</span></div>
-                <div class="text-slate-400 font-mono">${r.timestamp || ''}</div>
+                <div class="flex flex-col">
+                    <div class="text-[9px] uppercase tracking-wider text-slate-400">Created: ${r.created_by || 'System'}</div>
+                    ${r.updated_by ? `
+                        <div class="text-indigo-600 font-bold mt-0.5">
+                            Last Edit: ${r.updated_by}
+                        </div>` : ''
+                    }
+                </div>
+                <div class="text-slate-400 font-mono mt-1">${r.timestamp || ''}</div>
             </td>
         `;
         tbody.appendChild(tr);
     });
 }
-
 </script>
 
 </body>
