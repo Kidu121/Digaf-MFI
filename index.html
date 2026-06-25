@@ -1091,7 +1091,7 @@ async function updateRemark(clientId, remarkValue) {
     updateCounterCards(filtered);
 }
 
-    function renderLedger(data = null) {
+   function renderLedger(data = null) {
     const tbody = document.getElementById('ledger-rows');
     const recordsToRender = data || globalRecords;
     
@@ -1105,6 +1105,7 @@ async function updateRemark(clientId, remarkValue) {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50/80 transition-all border-b border-slate-100";
         
+        // የስታተስ ቀለም መምረጫ
         let badgeColor = "border-blue-200 text-blue-700 bg-blue-50";
         if (r.status === "Paid") badgeColor = "border-emerald-200 text-emerald-700 bg-emerald-50";
         if (r.status === "Renewal") badgeColor = "border-amber-200 text-amber-700 bg-amber-50";
@@ -1136,8 +1137,13 @@ async function updateRemark(clientId, remarkValue) {
                 </div>
             </td>
             <td class="px-6 py-3 text-slate-500 font-medium text-[11px]">
-                <div>By: <span class="font-bold text-slate-800">${r.created_by || 'System'}</span></div>
-                <div class="text-slate-400 font-mono">${r.timestamp || ''}</div>
+                <div class="flex items-center space-x-1">
+                    <span class="w-5 h-5 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center font-bold text-[10px]">
+                        ${(r.created_by || 'S')[0].toUpperCase()}
+                    </span>
+                    <span class="font-bold text-slate-800">${r.created_by || 'System'}</span>
+                </div>
+                <div class="text-slate-400 font-mono mt-1">${r.timestamp || ''}</div>
             </td>
         `;
         tbody.appendChild(tr);
