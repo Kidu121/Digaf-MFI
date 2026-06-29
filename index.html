@@ -782,54 +782,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 📥 FETCH FROM SUPABASE ---
 
-    async function fetchRecordsFromCloud() {
+  let globalRecords = []; // ይህ ለስክሪኑ ማሳያ (UI) ነው
+let allDatabaseData = []; // ይህ ለኤክስፖርት (Export) ብቻ የሚሆን ነው
+
+async function fetchRecordsFromCloud() {
     try {
-        document.getElementById('sync-status').innerText = "Loading all data...";
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?select=*&limit=1000`, {
+            method: 'GET',
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+        });
+        const data = await response.json();
         
-        let allRecords = [];
-        let rangeStart = 0;
-        let rangeEnd = 999;
-        let fetchMore = true;
-
-        // ሁሉንም እስኪያመጣ በ loop እንሂድ
-        while (fetchMore) {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?select=*`, {
-                method: 'GET',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    'Range': `${rangeStart}-${rangeEnd}`,
-                    'Prefer': 'count=exact'
-                }
-            });
-
-            if (!response.ok) break;
-
-            const data = await response.json();
-            if (data.length > 0) {
-                allRecords = allRecords.concat(data);
-                // መረጃው ከ 1000 ያነሰ ከሆነ ሁሉም ተጠናቋል ማለት ነው
-                if (data.length < 1000) {
-                    fetchMore = false;
-                } else {
-                    // ቀጣዩን 1000 መረጃ ለመፈለግ
-                    rangeStart += 1000;
-                    rangeEnd += 1000;
-                }
-            } else {
-                fetchMore = false;
-            }
-        }
-
-        globalRecords = allRecords;
-        console.log("ጠቅላላ የተሰበሰበ መረጃ:", globalRecords.length);
+        allDatabaseData = data; // ሙሉ መረጃውን እዚህ እናስቀምጠዋለን
+        globalRecords = data;   // የመጀመሪያ ማሳያ
         
-        document.getElementById('sync-status').innerText = "Cloud Live Sync Active";
-        filterByPreset('today');
-    } catch (err) {
-        console.error(err);
-        document.getElementById('sync-status').innerText = "Sync Connection Error!";
-    }
+        renderLedger(globalRecords);
+        updateCounterCards(globalRecords);
+    } catch (err) { console.error(err); }
+}
+
+// ኤክስፖርት ስታደርግ "allDatabaseData" ን ተጠቀም
+function exportToCSV() {
+    if (allDatabaseData.length === 0) { alert("ምንም መረጃ የለም!"); return; }
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Client Name,Status,Created By,Last Updated By,Timestamp\n";
+
+    allDatabaseData.forEach(r => {
+        let row = `"${r.name}","${r.status}","${r.created_by}","${r.updated_by || ''}","${r.timestamp}"`;
+        csvContent += row + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "Digaf_Full_Report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
     // --- 🔢 UPDATE COUNTER CARDS ---
