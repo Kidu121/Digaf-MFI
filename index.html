@@ -783,54 +783,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 📥 FETCH FROM SUPABASE ---
 
     async function fetchRecordsFromCloud() {
+    try {
+        document.getElementById('sync-status').innerText = "Loading all data...";
+        
+        let allRecords = [];
+        let rangeStart = 0;
+        let rangeEnd = 999;
+        let fetchMore = true;
 
-        try {
-
-            document.getElementById('sync-status').innerText = "Loading data...";
-
+        // ሁሉንም እስኪያመጣ በ loop እንሂድ
+        while (fetchMore) {
             const response = await fetch(`${SUPABASE_URL}/rest/v1/digaf_records?select=*`, {
-
                 method: 'GET',
-
                 headers: {
-
                     'apikey': SUPABASE_ANON_KEY,
-
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Range': `${rangeStart}-${rangeEnd}`,
+                    'Prefer': 'count=exact'
                 }
-
             });
 
-            if (!response.ok) throw new Error("Fetch failed");
+            if (!response.ok) break;
 
-            globalRecords = await response.json();
-
-            
-
-            globalRecords.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            
-
-            document.getElementById('sync-status').innerText = "Cloud Live Sync Active";
-
-            
-
-            // ሲከፈት በነባሪ የዛሬውን አሳይ
-
-            filterByPreset('today');
-
-        } catch (err) {
-
-            console.error(err);
-
-            document.getElementById('sync-status').innerText = "Sync Connection Error!";
-
+            const data = await response.json();
+            if (data.length > 0) {
+                allRecords = allRecords.concat(data);
+                // መረጃው ከ 1000 ያነሰ ከሆነ ሁሉም ተጠናቋል ማለት ነው
+                if (data.length < 1000) {
+                    fetchMore = false;
+                } else {
+                    // ቀጣዩን 1000 መረጃ ለመፈለግ
+                    rangeStart += 1000;
+                    rangeEnd += 1000;
+                }
+            } else {
+                fetchMore = false;
+            }
         }
 
+        globalRecords = allRecords;
+        console.log("ጠቅላላ የተሰበሰበ መረጃ:", globalRecords.length);
+        
+        document.getElementById('sync-status').innerText = "Cloud Live Sync Active";
+        filterByPreset('today');
+    } catch (err) {
+        console.error(err);
+        document.getElementById('sync-status').innerText = "Sync Connection Error!";
     }
-
-
+}
 
     // --- 🔢 UPDATE COUNTER CARDS ---
 
