@@ -614,23 +614,16 @@
 
 
 
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+           <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+        <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">📋 Active Workflow Ledger</h3>
+        
+        <button onclick="exportToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-700 shadow-sm cursor-pointer">
+            📥 Export to Excel
+        </button>
 
-
-
-                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-
-
-
-                    <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">📋 Active Workflow Ledger</h3>
-
-
-
-                    <span id="filter-indicator" class="text-xs text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded hidden"></span>
-
-
-
-                </div>
+        <span id="filter-indicator" class="text-xs text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded hidden"></span>
+    </div>
 
 
 
@@ -1089,6 +1082,33 @@ async function updateRemark(clientId, remarkValue) {
     // ውጤቱን ማሳያ
     renderLedger(filtered);
     updateCounterCards(filtered);
+}
+    function exportToExcel() {
+    const table = document.querySelector('table');
+    let csv = [];
+    
+    // የጠረጴዛውን ረድፎች ማንበብ
+    const rows = table.querySelectorAll('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll('td, th');
+        for (let j = 0; j < cols.length; j++) {
+            // ስልጠና እና ሌሎች መረጃዎችን ከጽሁፍ ማጽዳት
+            row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+        }
+        csv.push(row.join(','));
+    }
+    
+    // ፋይሉን ማውረድ
+    const csvFile = new Blob([csv.join('\n')], {type: 'text/csv'});
+    const downloadLink = document.createElement("a");
+    
+    downloadLink.download = "Digaf_MFI_Records_" + new Date().toLocaleDateString() + ".csv";
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
 }
 
    function renderLedger(data = null) {
