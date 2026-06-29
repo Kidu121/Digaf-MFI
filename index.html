@@ -1114,6 +1114,12 @@ async function updateRemark(clientId, remarkValue) {
     link.click();
     document.body.removeChild(link);
 }
+    function exportAllData() {
+    if (globalRecords.length === 0) { alert("ምንም መረጃ የለም!"); return; }
+    
+    // በስክሪኑ ላይ የታየውን ሳይሆን globalRecords (ሁሉንም) ይጠቀማል
+    generateCSV(globalRecords); 
+}
 
 
     // --- 🖥️ RENDER SCREEN ---
